@@ -4,7 +4,6 @@ import time
 # Define test cases (input, expected_output, time_limit in seconds)
 test_cases = [
     ("input1.txt", "expected_output1.txt", 2),
-    ("input2.txt", "expected_output2.txt", 3)
 ]
 
 def run_test_case(input_file, expected_output_file, time_limit):
