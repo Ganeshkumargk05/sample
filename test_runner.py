@@ -1,18 +1,51 @@
 import subprocess
 import time
+import os
 
 # Define test cases (input, expected_output, time_limit in seconds)
 test_cases = [
     ("input1.txt", "expected_output1.txt", 2),
 ]
 
+# Detect the solution file
+solution_file = None
+for file in os.listdir("."):
+    if file.endswith(".py") or file.endswith(".java") or file.endswith(".cpp"):
+        solution_file = file
+        break
+
+if not solution_file:
+    print("❌ No valid solution file found (.py, .java, .cpp)")
+    exit(1)
+
+# Determine the language and compilation (if needed)
+if solution_file.endswith(".py"):
+    run_command = ["python3", solution_file]
+elif solution_file.endswith(".java"):
+    compile_command = ["javac", solution_file]
+    run_command = ["java", solution_file.replace(".java", "")]
+elif solution_file.endswith(".cpp"):
+    compiled_file = "solution.out"
+    compile_command = ["g++", solution_file, "-o", compiled_file]
+    run_command = ["./" + compiled_file]
+else:
+    print("❌ Unsupported language")
+    exit(1)
+
+# Compile if needed
+if solution_file.endswith((".java", ".cpp")):
+    compile_result = subprocess.run(compile_command, capture_output=True, text=True)
+    if compile_result.returncode != 0:
+        print(f"❌ Compilation failed:\n{compile_result.stderr}")
+        exit(1)
+
+# Function to run test cases
 def run_test_case(input_file, expected_output_file, time_limit):
     start_time = time.time()
-    
-    # Run the participant's script
+
     try:
         result = subprocess.run(
-            ["python3", "solution.py"],  # Adjust command for other languages
+            run_command,
             stdin=open(input_file, "r"),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -23,10 +56,7 @@ def run_test_case(input_file, expected_output_file, time_limit):
         print(f"❌ Time limit exceeded for {input_file}")
         return False
 
-    end_time = time.time()
-    execution_time = end_time - start_time
-    
-    # Check output correctness
+    execution_time = time.time() - start_time
     expected_output = open(expected_output_file).read().strip()
     actual_output = result.stdout.strip()
 
@@ -41,4 +71,4 @@ def run_test_case(input_file, expected_output_file, time_limit):
 all_passed = all(run_test_case(tc[0], tc[1], tc[2]) for tc in test_cases)
 
 if not all_passed:
-    exit(1)  # GitHub Actions will mark the run as failed
+    exit(1)
