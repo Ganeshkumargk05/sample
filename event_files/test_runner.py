@@ -4,7 +4,7 @@ import os
 
 # Define test cases (input, expected_output, time_limit in seconds)
 test_cases = [
-    ("input1.txt", "expected_output1.txt", 2),
+    ("event_files/input1.txt", "event_files/expected_output1.txt", 2),
 ]
 
 # Detect the solution file
