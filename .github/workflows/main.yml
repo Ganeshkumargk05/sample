@@ -1,0 +1,23 @@
+name: Run and Test Submissions
+
+on:
+  push:
+    branches:
+      - solution
+  pull_request:
+
+jobs:
+  test_code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run Code with Test Cases
+        run: python test_runner.py
