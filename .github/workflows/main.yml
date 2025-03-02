@@ -20,4 +20,4 @@ jobs:
           python-version: '3.x'
 
       - name: Run Code with Test Cases
-        run: python test_runner.py
+        run: python event_files/test_runner.py
